@@ -13,7 +13,7 @@ use crate::types::TypeInfo;
 pub trait Database
 where
     Self: Sized + 'static,
-    Self: HasRow<Database = Self>,
+    Self: for<'a> HasRow<'a, Database = Self>,
     Self: for<'a> HasRawValue<'a>,
     Self: for<'a> HasCursor<'a, Database = Self>,
 {
@@ -40,8 +40,8 @@ pub trait HasCursor<'a> {
     type Cursor: Cursor<'a, Database = Self::Database>;
 }
 
-pub trait HasRow {
+pub trait HasRow<'a> {
     type Database: Database;
 
-    type Row: Row<Database = Self::Database>;
+    type Row: Row<'a, Database = Self::Database>;
 }

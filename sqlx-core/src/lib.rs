@@ -52,7 +52,7 @@ pub use error::{Error, Result};
 
 pub use connection::{Connect, Connection};
 pub use cursor::Cursor;
-pub use executor::Executor;
+pub use executor::{Execute, Executor};
 pub use query::{query, Query};
 pub use transaction::Transaction;
 

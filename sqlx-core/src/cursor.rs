@@ -24,7 +24,7 @@ where
     /// Fetch the first row in the result. Returns `None` if no row is present.
     ///
     /// Returns `Error::MoreThanOneRow` if more than one row is in the result.
-    fn first(self) -> BoxFuture<'a, crate::Result<Option<<Self::Database as HasRow>::Row>>>;
+    fn first(self) -> BoxFuture<'a, crate::Result<Option<<Self::Database as HasRow<'a>>::Row>>>;
 
     /// Fetch the next row in the result. Returns `None` if there are no more rows.
     fn next(&mut self) -> BoxFuture<crate::Result<Option<<Self::Database as HasRow>::Row>>>;

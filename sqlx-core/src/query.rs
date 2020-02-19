@@ -56,16 +56,18 @@ where
     pub async fn fetch_optional<'b, E>(
         self,
         executor: E,
-    ) -> crate::Result<Option<<DB as HasRow>::Row>>
+    ) -> crate::Result<Option<<DB as HasRow<'b>>::Row>>
     where
         E: Executor<'b, Database = DB>,
+        'a: 'b,
     {
         executor.execute(self).first().await
     }
 
-    pub async fn fetch_one<'b, E>(self, executor: E) -> crate::Result<<DB as HasRow>::Row>
+    pub async fn fetch_one<'b, E>(self, executor: E) -> crate::Result<<DB as HasRow<'b>>::Row>
     where
         E: Executor<'b, Database = DB>,
+        'a: 'b,
     {
         self.fetch_optional(executor)
             .and_then(|row| match row {

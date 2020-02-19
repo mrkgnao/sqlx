@@ -3,36 +3,34 @@ use std::io;
 use std::sync::Arc;
 
 use crate::executor::{Execute, Executor};
-use crate::postgres::protocol::{self, Encode, Message, StatementId, TypeFormat};
-use crate::postgres::{PgArguments, PgCursor, PgRow, PgTypeInfo, Postgres};
+use crate::postgres::protocol::{self, Encode, StatementId, TypeFormat};
+use crate::postgres::{PgArguments, PgConnection, PgCursor, PgRow, PgTypeInfo, Postgres};
 
-impl super::PgConnection {
+impl PgConnection {
     fn write_prepare(&mut self, query: &str, args: &PgArguments) -> StatementId {
-        if let Some(&id) = self.statement_cache.get(query) {
-            id
-        } else {
-            let id = StatementId(self.next_statement_id);
-            self.next_statement_id += 1;
+        // TODO: check query cache
 
-            protocol::Parse {
-                statement: id,
-                query,
-                param_types: &*args.types,
-            }
-            .encode(self.stream.buffer_mut());
+        let id = StatementId(self.next_statement_id);
 
-            self.statement_cache.put(query.to_owned(), id);
+        self.next_statement_id += 1;
 
-            id
-        }
+        self.stream.write(protocol::Parse {
+            statement: id,
+            query,
+            param_types: &*args.types,
+        });
+
+        // TODO: write to query cache
+
+        id
     }
 
     fn write_describe(&mut self, d: protocol::Describe) {
-        d.encode(self.stream.buffer_mut())
+        self.stream.write(d);
     }
 
     fn write_bind(&mut self, portal: &str, statement: StatementId, args: &PgArguments) {
-        protocol::Bind {
+        self.stream.write(protocol::Bind {
             portal,
             statement,
             formats: &[TypeFormat::Binary],
@@ -40,16 +38,15 @@ impl super::PgConnection {
             values_len: args.types.len() as i16,
             values: &*args.values,
             result_formats: &[TypeFormat::Binary],
-        }
-        .encode(self.stream.buffer_mut());
+        });
     }
 
     fn write_execute(&mut self, portal: &str, limit: i32) {
-        protocol::Execute { portal, limit }.encode(self.stream.buffer_mut());
+        self.stream.write(protocol::Execute { portal, limit });
     }
 
     fn write_sync(&mut self) {
-        protocol::Sync.encode(self.stream.buffer_mut());
+        self.stream.write(protocol::Sync);
     }
 }
 
@@ -75,9 +72,9 @@ impl<'e> Executor<'e> for &'e mut super::PgConnection {
 
         // Next, [Describe] will return the expected result columns and types
         // Conditionally run [Describe] only if the results have not been cached
-        if !self.statement_cache.has_columns(statement) {
-            self.write_describe(protocol::Describe::Portal(""));
-        }
+        // if !self.statement_cache.has_columns(statement) {
+        //     self.write_describe(protocol::Describe::Portal(""));
+        // }
 
         // Next, [Execute] then executes the named portal
         self.write_execute("", 0);
