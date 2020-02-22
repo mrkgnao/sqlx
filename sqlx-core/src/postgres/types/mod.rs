@@ -10,10 +10,16 @@ mod chrono;
 #[cfg(feature = "uuid")]
 mod uuid;
 
+#[cfg(feature = "json")]
+pub mod json;
+
 use std::fmt::{self, Debug, Display};
 
 use crate::postgres::protocol::TypeId;
 use crate::types::TypeInfo;
+
+#[cfg(feature = "json")]
+pub use json::{Json, Jsonb};
 
 #[derive(Debug, Clone)]
 pub struct PgTypeInfo {

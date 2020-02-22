@@ -46,4 +46,9 @@ impl TypeId {
     pub(crate) const ARRAY_BYTEA: TypeId = TypeId(1001);
 
     pub(crate) const ARRAY_UUID: TypeId = TypeId(2951);
+
+    // JSON
+
+    pub(crate) const JSON: TypeId = TypeId(114);
+    pub(crate) const JSONB: TypeId = TypeId(3802);
 }

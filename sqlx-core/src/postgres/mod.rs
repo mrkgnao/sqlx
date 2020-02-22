@@ -7,6 +7,9 @@ pub use error::PgError;
 pub use row::PgRow;
 pub use types::PgTypeInfo;
 
+#[cfg(feature = "json")]
+pub use types::{Json, Jsonb};
+
 mod arguments;
 mod connection;
 mod database;

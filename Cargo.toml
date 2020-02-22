@@ -26,7 +26,7 @@ authors = [
 ]
 
 [package.metadata.docs.rs]
-features = [ "tls", "postgres", "mysql", "uuid", "chrono" ]
+features = [ "tls", "postgres", "mysql", "uuid", "chrono", "json" ]
 rustdoc-args = ["--cfg", "docsrs"]
 
 [features]
@@ -45,10 +45,12 @@ mysql = [ "sqlx-core/mysql", "sqlx-macros/mysql" ]
 # types
 chrono = [ "sqlx-core/chrono", "sqlx-macros/chrono" ]
 uuid = [ "sqlx-core/uuid", "sqlx-macros/uuid" ]
+json = [ "sqlx-core/json", "serde" ]
 
 [dependencies]
 sqlx-core = { version = "0.2.5", path = "sqlx-core", default-features = false }
 sqlx-macros = { version = "0.2.4", path = "sqlx-macros", default-features = false, optional = true }
+serde = { version = "1.0", features = ["derive"], optional = true }
 
 [dev-dependencies]
 anyhow = "1.0.26"
@@ -82,6 +84,10 @@ required-features = [ "postgres" ]
 [[test]]
 name = "postgres-types-chrono"
 required-features = [ "postgres", "chrono" ]
+
+[[test]]
+name = "postgres-types-json"
+required-features = [ "postgres", "json" ]
 
 [[test]]
 name = "mysql-types"
