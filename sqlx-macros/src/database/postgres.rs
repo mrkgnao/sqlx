@@ -10,6 +10,7 @@ impl_database_ext! {
 
         // BYTEA
         Vec<u8>,
+        Vec<String>,
 
         #[cfg(feature = "uuid")]
         sqlx::types::Uuid,
