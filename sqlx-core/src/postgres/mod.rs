@@ -6,6 +6,7 @@ pub use database::Postgres;
 pub use error::PgError;
 pub use row::PgRow;
 pub use types::PgTypeInfo;
+pub use protocol::TypeId;
 
 mod arguments;
 mod connection;
