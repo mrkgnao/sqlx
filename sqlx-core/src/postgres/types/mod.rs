@@ -22,7 +22,7 @@ pub struct PgTypeInfo {
 }
 
 impl PgTypeInfo {
-    pub(crate) fn new(id: TypeId) -> Self {
+    pub fn new(id: TypeId) -> Self {
         Self { id }
     }
 
